@@ -13,7 +13,7 @@ The log aggregation process involves several steps to ensure that Docker logs ar
 1. **Docker Logging Driver**: Docker containers generate logs which are managed by the Docker logging driver. In this setup, the `json-file` logging driver is used to store logs in JSON format.
 2. **File Tailing**: Fluentd, a log collector, is configured to tail these JSON log files. This is achieved by binding the Docker log directory into the Fluentd container, allowing Fluentd to access and read the log files.
 3. **Log Processing**: Fluentd processes the tailed log files using a custom `kusto.lua` script. This script is responsible for formatting and preparing the logs for ingestion into the Kusto emulator.
-4. **Log Ingestion**: The processed logs are then sent to the Kusto emulator, where they can be queried and analyzed using Kusto Query Language (KQL).
+4. **Log Ingestion**: The processed logs are then sent to the Kusto emulator through an HTTP request, where they can be queried and analyzed using Kusto Query Language (KQL).
 
 This setup ensures that all Docker logs are efficiently collected and made available for analysis in a local development environment.
 
