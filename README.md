@@ -6,7 +6,28 @@ This tool sets up a simple Kusto emulator with Fluentd to pull all Docker logs i
 
 The purpose of this repository is to provide a local development environment for aggregating Docker logs using a Kusto emulator. This setup allows developers to test and debug their logging configurations and scripts in a controlled environment before deploying them to a production system. Additionally, it aims to help developers search through logs and dashboard complex systems by providing a way to visualize and analyze log data effectively using Azure Kusto Explorer.
 
-**CAUTION:** The Fluentd configuration is a bit hacky because Fluentd does not natively support the Kusto emulator, as the Kusto emulator does not support log streaming. We had to create a custom `kusto.lua` script to handle aggregating the logs. However, if more than 10,000 logs are sent in 2 seconds, you will likely encounter issues. It is very possilbe that you would be limitied before that number. This is for local development only.
+## Log Flow Overview
+
+The log aggregation process involves several steps to ensure that Docker logs are collected and sent to the Kusto emulator. Here's how it works:
+
+1. **Docker Logging Driver**: Docker containers generate logs which are managed by the Docker logging driver. In this setup, the `json-file` logging driver is used to store logs in JSON format.
+2. **File Tailing**: Fluentd, a log collector, is configured to tail these JSON log files. This is achieved by binding the Docker log directory into the Fluentd container, allowing Fluentd to access and read the log files.
+3. **Log Processing**: Fluentd processes the tailed log files using a custom `kusto.lua` script. This script is responsible for formatting and preparing the logs for ingestion into the Kusto emulator.
+4. **Log Ingestion**: The processed logs are then sent to the Kusto emulator, where they can be queried and analyzed using Kusto Query Language (KQL).
+
+This setup ensures that all Docker logs are efficiently collected and made available for analysis in a local development environment.
+
+**CAUTION:** The Fluentd configuration is a bit hacky because Fluentd does not natively support the Kusto emulator, as the Kusto emulator does not support log streaming. We had to create a custom `kusto.lua` script to handle aggregating the logs. However, if more than 10,000 logs are sent in 2 seconds, you will likely encounter issues. It is very possible that you would be limited before that number. This is for local development only.
+
+## Important Note on Log Destination
+
+It is important to note that in this setup, logs are not sent to Azure Data Explorer. Instead, they are ingested into a local Kusto emulator. This distinction is crucial for understanding the scope, limitations, and security of this tool:
+
+- **Local Development**: The Kusto emulator is intended for local development and testing purposes. It allows developers to experiment with log aggregation and querying without the need for an Azure subscription.
+- **Security**: You do not have to worry about your personal docker containers being ingested into ADX
+
+This approach provides a cost-effective and convenient way to develop and test logging configurations before deploying them to a production environment that uses Azure Data Explorer.
+
 
 ## Prerequisites
 
@@ -31,7 +52,7 @@ To use this tool, follow these steps:
    The log collector will collect all JSON logs and send them to the Kusto emulator.
 
 3. **Open a browser and navigate to [Azure Data Explorer](https://dataexplorer.azure.com):** 
-   - Login if needed with any microsoft account.
+   - Login if needed with any Microsoft account.
    - **Alternative:** If you are using a Windows machine, you can download the [Azure Kusto Explorer desktop application](https://learn.microsoft.com/en-us/kusto/tools/kusto-explorer) for a more integrated experience.
 
 4. **Add a connection to the Kusto emulator:**
@@ -133,7 +154,6 @@ Changes made:
 2. Provided a more specific file reference (`docker-compose.yml`).
 3. Enhanced the description for better readability.
 
-
 ## Troubleshooting
 
 - **Logs not appearing in Kusto:**
@@ -155,7 +175,3 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 - [Fluentd](https://www.fluentd.org/)
 - [Azure Data Explorer](https://dataexplorer.azure.com)
-
----
-
-This expanded README includes sections for prerequisites, usage, example queries, troubleshooting, contributing, license, and acknowledgments, making it more comprehensive and user-friendly.
