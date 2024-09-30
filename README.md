@@ -4,7 +4,7 @@
 
 This tool sets up a simple Kusto emulator with Fluentd to pull all Docker logs into the Kusto emulator.
 
-**CAUTION:** The Fluentd configuration is a bit hacky because Fluentd does not natively support the Kusto emulator, as the Kusto emulator does not support log streaming. We had to create a custom `kusto.lua` script to handle aggregating the logs. However, if more than 10,000 logs are sent in 2 seconds, you will likely encounter issues. This is for local development only.
+**CAUTION:** The Fluentd configuration is a bit hacky because Fluentd does not natively support the Kusto emulator, as the Kusto emulator does not support log streaming. We had to create a custom `kusto.lua` script to handle aggregating the logs. However, if more than 10,000 logs are sent in 2 seconds, you will likely encounter issues. It is very possilbe that you would be limitied before that number. This is for local development only.
 
 ## Prerequisites
 
