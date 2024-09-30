@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  log-generator:
+    image: bash
+    command: |
+      /bin/sh -c "count=1; while true; do echo \"{\\\"counter\\\": $$count, \\\"date\\\": \\\"$$(date -u +'%Y-%m-%dT%H:%M:%SZ')\\\" }\"; sleep 1; count=$$((count+1)); done"
+      driver: json-file
+      options:
+        max-size: "512m"
+        max-file: "3"
+        labels: "serviceName,stackId"
+        tag: '{ "imageName": "{{.ImageName}}", "containerName": "{{.Name}}", "containerId": "{{.ID}}" }'
+    labels: 
+      stackId: LOCAL-DEVELOPER-STACK

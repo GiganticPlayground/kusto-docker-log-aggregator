@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  kusto-emulator:
+    image: mcr.microsoft.com/azuredataexplorer/kustainer-linux:latest
+    container_name: kusto-emulator
+    environment:
+      ACCEPT_EULA: "Y"
+    ports:
+      - "8080:8080" # The Kusto emulator listens on port 8080
+
+  fluent-bit:
+    image: fluent/fluent-bit:2.1
+    container_name: fluent-bit
+    depends_on:
+      - kusto-emulator
+    volumes:
+      - ./fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+      - ./fluent-bit/kusto.lua:/fluent-bit/etc/kusto.lua
+      - /var/lib/docker/containers:/var/lib/docker/containers
+    environment:
+      KUSTO_HOST: "kusto-emulator"
+      KUSTO_DATABASE: "NetDefaultDB"
+      KUSTO_TABLE: "application_logs"
+      KUSTO_INGESTION_URI: "https://ingest-kusto-emulator:8080"
+    ports:
+      - "2020:2020"
